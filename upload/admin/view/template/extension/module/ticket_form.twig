@@ -1,0 +1,47 @@
+{{ header }}
+<div class="container-fluid">
+    <h1>{{ text_form }}</h1>
+    <form action="{{ action }}" method="post" class="form-horizontal">
+        <div class="form-group">
+            <label class="col-sm-2 control-label">{{ entry_name }}</label>
+            <div class="col-sm-10">
+                <input type="text" name="name" value="{{ name }}" class="form-control" />
+                {% if error_name %}
+                    <div class="text-danger">{{ error_name }}</div>
+                {% endif %}
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">{{ entry_gender }}</label>
+            <div class="col-sm-10">
+                <select name="gender" class="form-control">
+                    <option value="male" {{ gender == 'male' ? 'selected' }}>Male</option>
+                    <option value="female" {{ gender == 'female' ? 'selected' }}>Female</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">{{ entry_inquiry }}</label>
+            <div class="col-sm-10">
+                <textarea name="inquiry" class="form-control">{{ inquiry }}</textarea>
+            </div>
+        </div>
+        <div class="form-group">
+            <label class="col-sm-2 control-label">{{ entry_status }}</label>
+            <div class="col-sm-10">
+                <select name="status" class="form-control">
+                    <option value="new" {{ status == 'new' ? 'selected' }}>New</option>
+                    <option value="processing" {{ status == 'processing' ? 'selected' }}>Processing</option>
+                    <option value="cancel" {{ status == 'cancel' ? 'selected' }}>Cancel</option>
+                    <option value="completed" {{ status == 'completed' ? 'selected' }}>Completed</option>
+                </select>
+            </div>
+        </div>
+        <div class="form-group">
+            <div class="col-sm-10 col-sm-offset-2">
+                <button type="submit" class="btn btn-primary">{{ button_save }}</button>
+            </div>
+        </div>
+    </form>
+</div>
+{{ footer }}

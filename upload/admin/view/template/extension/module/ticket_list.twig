@@ -1,0 +1,33 @@
+{{ header }}
+<div class="container-fluid">
+    <div class="float-end">
+        <a href="{{ add }}" class="btn btn-primary">{{ button_add }}</a>
+    </div>
+    <h1>{{ heading_title }}</h1>
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>{{ column_name }}</th>
+                <th>{{ column_gender }}</th>
+                <th>{{ column_inquiry }}</th>
+                <th>{{ column_status }}</th>
+                <th>{{ column_action }}</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for ticket in tickets %}
+                <tr>
+                    <td>{{ ticket.name }}</td>
+                    <td>{{ ticket.gender }}</td>
+                    <td>{{ ticket.inquiry }}</td>
+                    <td>{{ ticket.status }}</td>
+                    <td>
+                        <a href="{{ ticket.edit }}" class="btn btn-primary">{{ button_edit }}</a>
+                        <a href="{{ delete }}&ticket_id={{ ticket.ticket_id }}" class="btn btn-danger">{{ button_delete }}</a>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{{ footer }}

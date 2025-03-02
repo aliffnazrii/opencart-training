@@ -1,0 +1,40 @@
+<modification>
+    <name>Ticket Menu and Rename Manufacturers</name>
+    <version>1.0</version>
+    <author>Your Name</author>
+    <code>ticket_menu_and_brands</code>
+    <link>https://example.com</link>
+
+    <!-- Add Ticket Menu to the Left Menu -->
+    <file path="admin/controller/common/column_left.php">
+        <operation>
+            <search><![CDATA[$data['menus'][] = [
+                'id'       => 'menu-extension',
+                'icon'     => 'fa-puzzle-piece',
+                'name'     => $this->language->get('text_extension'),
+                'href'     => '',
+                'children' => $marketplace
+            ];]]></search>
+            <add position="after"><![CDATA[
+                // Add Ticket Menu
+                $data['menus'][] = [
+                    'id'       => 'menu-ticket',
+                    'icon'     => 'fa-ticket-alt',
+                    'name'     => 'Ticket',
+                    'href'     => $this->url->link('extension/module/ticket', 'user_token=' . $this->session->data['user_token'], true),
+                    'children' => []
+                ];
+            ]]></add>
+        </operation>
+    </file>
+
+    <!-- Rename "Manufacturers" to "Brands" -->
+    <file path="admin/language/en-gb/catalog/manufacturer.php">
+        <operation>
+            <search><![CDATA[$_['text_manufacturer']]]></search>
+            <add position="replace"><![CDATA[
+                $_['text_manufacturer'] = 'Brands';
+            ]]></add>
+        </operation>
+    </file>
+</modification>

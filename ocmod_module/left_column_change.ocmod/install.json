@@ -1,0 +1,13 @@
+{
+    "name": "Ticket Menu and Rename Manufacturers",
+    "version": "1.0",
+    "author": "Your Name",
+    "link": "https://example.com",
+    "description": "Adds a Ticket menu to the left-hand menu and renames 'Manufacturers' to 'Brands'.",
+    "code": "ticket_menu_and_brands",
+    "type": "modification",
+    "license": "GPL-3.0-or-later",
+    "install": {
+        "file": "install.xml"
+    }
+}
