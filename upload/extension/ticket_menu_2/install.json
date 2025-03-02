@@ -1,0 +1,13 @@
+{
+    "name": "Ticket Menu",
+    "version": "1.0",
+    "author": "Your Name",
+    "link": "https://example.com",
+    "description": "Adds a Ticket menu to the left menu in the OpenCart admin panel and renames the 'Manufacturers' menu to 'Brands'.",
+    "code": "ticket_menu",
+    "type": "modification",
+    "license": "GPL-3.0-or-later",
+    "install": {
+        "file": "ticket_menu.ocmod.xml"
+    }
+}
