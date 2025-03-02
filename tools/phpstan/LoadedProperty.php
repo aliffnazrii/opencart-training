@@ -18,10 +18,9 @@ class LoadedProperty implements PropertyReflection {
 	 */
 	private $type;
 
-	public function __construct(ClassReflection $declaringClass, Type $readableType, bool $isWritable = false) {
+	public function __construct(ClassReflection $declaringClass, Type $readableType) {
 		$this->declaringClass = $declaringClass;
 		$this->type = $readableType;
-		$this->isWritable = $isWritable;
 	}
 
 	public function getDeclaringClass(): ClassReflection {
@@ -45,7 +44,7 @@ class LoadedProperty implements PropertyReflection {
 	}
 
 	public function isWritable(): bool {
-		return $this->isWritable;
+		return false;
 	}
 
 	public function getDocComment(): ?string {

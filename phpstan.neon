@@ -4,22 +4,18 @@ services:
         tags:
             - phpstan.broker.propertiesClassReflectionExtension
 parameters:
-    level: 6
+    level: 1
     paths:
         - ./upload/
     excludePaths:
         - ./system/storage/vendor/
+        - ./system/storage/cache/template/
         - ./upload/system/storage/vendor/
-        - ./upload/system/storage/cache/
+        - ./upload/system/storage/cache/template/
     tmpDir: .cache
     ignoreErrors:
-        - '#^Access to an undefined property Opencart\\System\\Engine\\Proxy<Opencart\\Catalog\\Model\\Checkout\\Cart>::\$getTotals\.$#'
-        - '# always exists and is not #'
-        - '#^Call to an undefined method object::[a-zA-Z]+\(\)\.$#'
-        - '#^Constant [A-Z_]+ not found\.$#'
-        - '#^Empty array passed to foreach\.$#'
-        - '# is always (true|false)\.$#'
-        - '#^Method .* is unused\.$#'
-        - '#^Parameter \#2 \$value of method Opencart\\Admin\\Model\\Design\\SeoUrl::\S+\(\) expects string, int given\.$#'
-        - '#^Parameter \#\d+ \$\S+ of function \S+ expects .*(int|float|string).*, .*(int|float|string).* given\.$#'
-        - '#^Variable \$\S+ might not be defined\.$#'
+        - '#Class Event constructor invoked with 1 parameter, 4-5 required\.#'
+        - '#Constant [A-Z_]+ not found\.#'
+        - '#might not be defined\.#'
+        - '#invoked with \d+ parameters?, \d+ required\.#'
+    reportUnmatchedIgnoredErrors: false

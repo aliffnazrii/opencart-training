@@ -1,60 +1,59 @@
 <?php
-namespace Opencart\Catalog\Controller\Common;
-/**
- * Class Language
- *
- * Can be called from $this->load->controller('common/language');
- *
- * @package Opencart\Catalog\Controller\Common
- */
-class Language extends \Opencart\System\Engine\Controller {
-	/**
-	 * Index
-	 *
-	 * @return string
-	 */
-	public function index(): string {
+class ControllerCommonLanguage extends Controller {
+	public function index() {
 		$this->load->language('common/language');
 
-		$url_data = $this->request->get;
+		$data['action'] = $this->url->link('common/language/language', '', $this->request->server['HTTPS']);
 
-		if (isset($url_data['route'])) {
-			$route = $url_data['route'];
-		} else {
-			$route = $this->config->get('action_default');
-		}
-
-		unset($url_data['route']);
-		unset($url_data['_route_']);
-		unset($url_data['language']);
-
-		$url = '';
-
-		if ($url_data) {
-			$url .= '&' . urldecode(http_build_query($url_data));
-		}
-
-		// Added so the correct SEO language URL is used.
-		$language_id = $this->config->get('config_language_id');
-
-		$data['languages'] = [];
+		$data['code'] = $this->session->data['language'];
 
 		$this->load->model('localisation/language');
+
+		$data['languages'] = array();
 
 		$results = $this->model_localisation_language->getLanguages();
 
 		foreach ($results as $result) {
-			$this->config->set('config_language_id', $result['language_id']);
-
-			$data['languages'][$result['code']] = ['href' => $this->url->link($route, 'language=' . $result['code'] . $url, true)] + $result;
+			if ($result['status']) {
+				$data['languages'][] = array(
+					'name' => $result['name'],
+					'code' => $result['code']
+				);
+			}
 		}
 
-		$this->config->set('config_language_id', $language_id);
+		if (!isset($this->request->get['route'])) {
+			$data['redirect'] = $this->url->link('common/home');
+		} else {
+			$url_data = $this->request->get;
 
-		$data['name'] = $data['languages'][$result['code']]['name'];
-		$data['code'] = $this->config->get('config_language');
-		$data['image'] = $data['languages'][$result['code']]['image'];
+			unset($url_data['_route_']);
+
+			$route = $url_data['route'];
+
+			unset($url_data['route']);
+
+			$url = '';
+
+			if ($url_data) {
+				$url = '&' . urldecode(http_build_query($url_data, '', '&'));
+			}
+
+			$data['redirect'] = $this->url->link($route, $url, $this->request->server['HTTPS']);
+		}
 
 		return $this->load->view('common/language', $data);
+	}
+
+	public function language() {
+		if (isset($this->request->post['code'])) {
+			$this->session->data['language'] = $this->request->post['code'];
+		}
+
+		if (isset($this->request->post['redirect']) && (strpos($this->request->post['redirect'], $this->config->get('config_url')) === 0 || strpos($this->request->post['redirect'], $this->config->get('config_ssl')) === 0)) {
+			$this->response->redirect($this->request->post['redirect']);
+		} else {
+			$this->response->redirect($this->url->link('common/home'));
+		}
 	}
 }

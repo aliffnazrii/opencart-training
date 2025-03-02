@@ -3,7 +3,7 @@ name: Lint
 on:
   push:
     branches:
-      - master
+      - 3.0.x.x
   pull_request:
     types: [opened, synchronize]
 
@@ -16,7 +16,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: ['7.4', '8.0', '8.1', '8.2', '8.3']
+        php: ['7.3', '7.4', '8.0', '8.1', '8.2', '8.3']
     steps:
       - name: Checkout
         uses: actions/checkout@v2
@@ -26,10 +26,15 @@ jobs:
         with:
           php-version: ${{ matrix.php }}
           tools: composer:v2, cs2pr
+          extensions: mbstring
 
-      - name: Lint PHP Files
+      - name: Lint
         run: |
-          if find upload -type f -name "*.php" ! -path 'upload/system/storage/vendor/*' -exec php -l -n {} + | grep -q "Errors parsing"; then
+          error=0
+          for file in $(find upload -type f -name "*.php" ! -path 'upload/system/storage/vendor/*'); do
+            php -l -n $file | grep -v "No syntax errors detected" && error=1
+          done
+          if [ $error -eq 1 ]; then
             echo "Syntax errors were found."
             exit 1
           else
@@ -43,17 +48,17 @@ jobs:
             ~/.cache/composer/files
             ./.cache
             ./.php-cs-fixer.cache
-          key: ${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
-          restore-keys: ${{ matrix.php }}-
+          key: OC3.0-PHP${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+          restore-keys: OC3.0-PHP${{ matrix.php }}-
 
-      - name: Install Dependencies
-        run: composer install
+      - name: PHPStan
+        run: |
+          composer require phpstan/phpstan 1.10.57
+          ./upload/system/storage/vendor/bin/phpstan analyze --no-progress
 
-      - name: Run PHPStan
-        run: php tools/phpstan.phar analyze --no-progress
-
-      - name: Check Code Style
+      - name: Code style
         if: matrix.php == '8.3'
         run: |
-          php tools/php-cs-fixer.phar fix --dry-run --diff --ansi || true
-          php tools/php-cs-fixer.phar fix --dry-run --format=checkstyle | cs2pr
+          composer require --dev -w friendsofphp/php-cs-fixer v3.41.1
+          ./upload/system/storage/vendor/bin/php-cs-fixer fix --dry-run --diff --ansi || true
+          ./upload/system/storage/vendor/bin/php-cs-fixer fix --dry-run --format=checkstyle | cs2pr

@@ -1,98 +1,39 @@
 <?php
-// @return string
-function oc_get_ip(): string {
-	$headers = [
-		'HTTP_CF_CONNECTING_IP', // CloudFlare
-		'HTTP_X_FORWARDED_FOR',  // AWS LB and other reverse-proxies
-		'HTTP_X_REAL_IP',
-		'HTTP_X_CLIENT_IP',
-		'HTTP_CLIENT_IP',
-		'HTTP_X_CLUSTER_CLIENT_IP',
-	];
-
-	foreach ($headers as $header) {
-		if (array_key_exists($header, $_SERVER)) {
-			$ip = $_SERVER[$header];
-
-			// This line might or might not be used.
-			$ip = trim(explode(',', $ip)[0]);
-
-			return $ip;
-		}
-	}
-
-	return $_SERVER['REMOTE_ADDR'];
+function token($length = 32) {
+	// Create random token
+	$string = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	
+	$max = strlen($string) - 1;
+	
+	$token = '';
+	
+	for ($i = 0; $i < $length; $i++) {
+		$token .= $string[random_int(0, $max)];
+	}	
+	
+	return $token;
 }
 
 /**
- * @param string $string
- *
- * @return int
+ * Backwards support for timing safe hash string comparisons
+ * 
+ * http://php.net/manual/en/function.hash-equals.php
  */
-function oc_strlen(string $string): int {
-	return mb_strlen($string);
-}
 
-/**
- * @param string $string
- * @param string $needle
- * @param int    $offset
- *
- * @return false|int
- */
-function oc_strpos(string $string, string $needle, int $offset = 0) {
-	return mb_strpos($string, $needle, $offset);
-}
+if(!function_exists('hash_equals')) {
+	function hash_equals($known_string, $user_string) {
+		$known_string = (string)$known_string;
+		$user_string = (string)$user_string;
 
-/**
- * @param string $string
- * @param string $needle
- * @param int    $offset
- *
- * @return false|int
- */
-function oc_strrpos(string $string, string $needle, int $offset = 0) {
-	return mb_strrpos($string, $needle, $offset);
-}
-
-function oc_substr(string $string, int $offset, ?int $length = null): string {
-	return mb_substr($string, $offset, $length);
-}
-
-function oc_strtoupper(string $string): string {
-	return mb_strtoupper($string);
-}
-
-function oc_strtolower(string $string): string {
-	return mb_strtolower($string);
-}
-
-// Other
-function oc_token(int $length = 32): string {
-	return substr(bin2hex(random_bytes($length)), 0, $length);
-}
-
-// Pre PHP8 compatibility
-if (!function_exists('str_starts_with')) {
-	function str_starts_with(string $string, string $find): bool {
-		$substring = substr($string, 0, strlen($find));
-
-		if ($substring === $find) {
-			return true;
-		} else {
+		if(strlen($known_string) != strlen($user_string)) {
 			return false;
+		} else {
+			$res = $known_string ^ $user_string;
+			$ret = 0;
+
+			for($i = strlen($res) - 1; $i >= 0; $i--) $ret |= ord($res[$i]);
+
+			return !$ret;
 		}
-	}
-}
-
-if (!function_exists('str_ends_with')) {
-	function str_ends_with(string $string, string $find): bool {
-		return substr($string, -strlen($find)) === $find;
-	}
-}
-
-if (!function_exists('str_contains')) {
-	function str_contains(string $string, string $find): bool {
-		return $find === '' || strpos($string, $find) !== false;
 	}
 }
